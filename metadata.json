@@ -1,0 +1,6 @@
+{
+  "name": "Clickit",
+  "description": "Clickit - Premium Android Camera App with film-inspired filters, pro manual controls, RAW support, presets, photo editor, and built-in gallery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
