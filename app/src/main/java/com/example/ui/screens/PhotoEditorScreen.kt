@@ -20,24 +20,22 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Redo
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.ContentPaste
-import androidx.compose.material.icons.filled.Redo
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -58,7 +57,7 @@ import com.example.data.db.PhotoDao
 import com.example.data.model.FilmFilterCatalog
 import com.example.data.model.PhotoItem
 import com.example.ui.components.FilterSelectorBar
-import com.example.ui.components.GlassCard
+import com.example.utils.ImageProcessingUtils
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -132,10 +131,22 @@ fun PhotoEditorScreen(
 
     val currentPhoto = photo ?: return
 
+    val composeColorMatrix = remember(currentState, isHoldingBefore) {
+        if (isHoldingBefore) null
+        else ImageProcessingUtils.buildComposeColorMatrix(
+            filterName = currentState.filterName,
+            exposure = currentState.exposure,
+            contrast = currentState.contrast,
+            saturation = currentState.saturation,
+            temperature = currentState.temperature,
+            tint = currentState.tint
+        )
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF101014))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Top Editor Bar
@@ -147,21 +158,37 @@ fun PhotoEditorScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { undo() }, enabled = historyIndex > 0) {
-                        Icon(Icons.Default.Undo, contentDescription = "Undo", tint = if (historyIndex > 0) Color.White else Color.Gray)
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Undo,
+                            contentDescription = "Undo",
+                            tint = if (historyIndex > 0) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.38f)
+                        )
                     }
                     IconButton(onClick = { redo() }, enabled = historyIndex < history.size - 1) {
-                        Icon(Icons.Default.Redo, contentDescription = "Redo", tint = if (historyIndex < history.size - 1) Color.White else Color.Gray)
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Redo,
+                            contentDescription = "Redo",
+                            tint = if (historyIndex < history.size - 1) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.38f)
+                        )
                     }
                     IconButton(onClick = {
                         copiedState = currentState
                         Toast.makeText(context, "Edits copied!", Toast.LENGTH_SHORT).show()
                     }) {
-                        Icon(Icons.Default.ContentCopy, contentDescription = "Copy Edits", tint = Color.White)
+                        Icon(
+                            imageVector = Icons.Default.ContentCopy,
+                            contentDescription = "Copy Edits",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
                     }
                     IconButton(onClick = {
                         copiedState?.let {
@@ -169,23 +196,39 @@ fun PhotoEditorScreen(
                             Toast.makeText(context, "Edits pasted!", Toast.LENGTH_SHORT).show()
                         }
                     }, enabled = copiedState != null) {
-                        Icon(Icons.Default.ContentPaste, contentDescription = "Paste Edits", tint = if (copiedState != null) Color.White else Color.Gray)
+                        Icon(
+                            imageVector = Icons.Default.ContentPaste,
+                            contentDescription = "Paste Edits",
+                            tint = if (copiedState != null) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.38f)
+                        )
                     }
                 }
 
                 Button(
                     onClick = {
                         coroutineScope.launch {
-                            val updated = currentPhoto.copy(filterApplied = currentState.filterName)
+                            val file = File(currentPhoto.filePath)
+                            val editedBitmap = ImageProcessingUtils.renderEditedBitmap(file, currentState)
+                            var savedPath = currentPhoto.filePath
+                            if (editedBitmap != null) {
+                                val exported = ImageProcessingUtils.exportToSystemGallery(context, editedBitmap)
+                                if (exported != null) {
+                                    savedPath = exported
+                                }
+                            }
+                            val updated = currentPhoto.copy(
+                                filePath = savedPath,
+                                filterApplied = currentState.filterName
+                            )
                             photoDao.updatePhoto(updated)
-                            Toast.makeText(context, "Edits saved!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Photo saved & exported to Gallery!", Toast.LENGTH_SHORT).show()
                             onBack()
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6D00)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text("Save", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text("Save & Export", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
                 }
             }
 
@@ -210,6 +253,7 @@ fun PhotoEditorScreen(
                 AsyncImage(
                     model = File(currentPhoto.filePath),
                     contentDescription = "Edited Image",
+                    colorFilter = composeColorMatrix?.let { ColorFilter.colorMatrix(it) },
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -242,7 +286,7 @@ fun PhotoEditorScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp)
-                    .background(Color(0xFF18181E))
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .verticalScroll(rememberScrollState())
             ) {
@@ -291,14 +335,27 @@ private fun EditorSlider(
             .fillMaxWidth()
             .padding(vertical = 2.dp)
     ) {
-        Text(label, color = Color.White, fontSize = 12.sp, modifier = Modifier.width(90.dp))
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 12.sp,
+            modifier = Modifier.width(90.dp)
+        )
         Slider(
             value = value,
             onValueChange = onValueChange,
             valueRange = range,
             modifier = Modifier.weight(1f),
-            colors = SliderDefaults.colors(thumbColor = Color(0xFFFF6D00), activeTrackColor = Color(0xFFFF6D00))
+            colors = SliderDefaults.colors(
+                thumbColor = MaterialTheme.colorScheme.primary,
+                activeTrackColor = MaterialTheme.colorScheme.primary
+            )
         )
-        Text(String.format("%.1f", value), color = Color.Gray, fontSize = 11.sp, modifier = Modifier.width(36.dp))
+        Text(
+            text = String.format("%.1f", value),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 11.sp,
+            modifier = Modifier.width(36.dp)
+        )
     }
 }

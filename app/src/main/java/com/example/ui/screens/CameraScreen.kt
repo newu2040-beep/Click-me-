@@ -159,8 +159,17 @@ fun CameraScreen(
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     coroutineScope.launch {
+                        var savedPath = photoFile.absolutePath
+                        val editState = com.example.ui.screens.EditState(filterName = selectedFilter.name)
+                        val rendered = com.example.utils.ImageProcessingUtils.renderEditedBitmap(photoFile, editState)
+                        if (rendered != null) {
+                            val exported = com.example.utils.ImageProcessingUtils.exportToSystemGallery(context, rendered)
+                            if (exported != null) {
+                                savedPath = exported
+                            }
+                        }
                         val photoItem = PhotoItem(
-                            filePath = photoFile.absolutePath,
+                            filePath = savedPath,
                             title = photoFile.name,
                             filterApplied = selectedFilter.name,
                             iso = "ISO ${(isoValue * 1600).toInt() + 100}",
@@ -169,7 +178,7 @@ fun CameraScreen(
                             isRaw = isRawEnabled
                         )
                         photoDao.insertPhoto(photoItem)
-                        Toast.makeText(context, "Photo captured!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Photo captured & saved to Gallery!", Toast.LENGTH_SHORT).show()
                     }
                 }
 

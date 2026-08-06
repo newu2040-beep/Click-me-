@@ -1,8 +1,10 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,9 +21,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -59,7 +62,7 @@ fun SettingsScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF101014))
+            .background(MaterialTheme.colorScheme.background)
             .padding(top = 40.dp)
     ) {
         // Top Bar
@@ -70,9 +73,19 @@ fun SettingsScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
             }
-            Text("Settings", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+            Text(
+                text = "Settings",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
         }
 
         Column(
@@ -82,23 +95,33 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             // Theme Selector
-            Text("THEMES & APPEARANCE", color = Color(0xFFFF6D00), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = "THEMES & APPEARANCE",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(modifier = Modifier.height(8.dp))
 
             GlassCard(
                 modifier = Modifier.fillMaxWidth(),
                 cornerRadius = 20.dp,
-                backgroundColor = Color.White.copy(alpha = 0.08f)
+                backgroundColor = MaterialTheme.colorScheme.surface
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Select Theme Palette", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = "Select Theme Palette",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
 
                     LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                         contentPadding = PaddingValues(vertical = 4.dp)
                     ) {
-                        items(AppTheme.values()) { theme ->
+                        items(AppTheme.entries.toTypedArray()) { theme ->
                             val isSelected = theme.name == currentTheme
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -106,18 +129,22 @@ fun SettingsScreen(
                                     coroutineScope.launch { userPreferencesRepository.setAppTheme(theme.name) }
                                 }
                             ) {
-                                Column(
+                                Box(
                                     modifier = Modifier
-                                        .size(44.dp)
+                                        .size(48.dp)
                                         .clip(CircleShape)
                                         .background(Color(theme.primaryHex))
-                                        .padding(2.dp)
-                                ) {}
-                                Spacer(modifier = Modifier.height(4.dp))
+                                        .border(
+                                            width = if (isSelected) 3.dp else 0.dp,
+                                            color = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.Transparent,
+                                            shape = CircleShape
+                                        )
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
                                 Text(
                                     text = theme.displayName,
-                                    color = if (isSelected) Color(0xFFFF6D00) else Color.Gray,
-                                    fontSize = 10.sp,
+                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 11.sp,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                                 )
                             }
@@ -129,13 +156,18 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Camera Defaults
-            Text("CAMERA DEFAULTS", color = Color(0xFFFF6D00), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = "CAMERA DEFAULTS",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(modifier = Modifier.height(8.dp))
 
             GlassCard(
                 modifier = Modifier.fillMaxWidth(),
                 cornerRadius = 20.dp,
-                backgroundColor = Color.White.copy(alpha = 0.08f)
+                backgroundColor = MaterialTheme.colorScheme.surface
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     SettingToggle("Show Live Histogram", showHistogram) {
@@ -161,7 +193,7 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .clickable { onOpenAbout() },
                 cornerRadius = 20.dp,
-                backgroundColor = Color.White.copy(alpha = 0.08f)
+                backgroundColor = MaterialTheme.colorScheme.surface
             ) {
                 Row(
                     modifier = Modifier
@@ -170,8 +202,17 @@ fun SettingsScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("About Clickit", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                    Text("v1.0.0", color = Color.Gray, fontSize = 13.sp)
+                    Text(
+                        text = "About Clickit",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "v1.0.0",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 13.sp
+                    )
                 }
             }
 
@@ -193,13 +234,17 @@ private fun SettingToggle(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, color = Color.White, fontSize = 14.sp)
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 14.sp
+        )
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
             colors = SwitchDefaults.colors(
-                checkedThumbColor = Color.White,
-                checkedTrackColor = Color(0xFFFF6D00)
+                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                checkedTrackColor = MaterialTheme.colorScheme.primary
             )
         )
     }

@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
@@ -100,8 +101,8 @@ fun ClickitNavGraph() {
             gesturesEnabled = drawerState.isOpen,
             drawerContent = {
                 ModalDrawerSheet(
-                    drawerContainerColor = Color(0xFF18181E),
-                    drawerContentColor = Color.White
+                    drawerContainerColor = MaterialTheme.colorScheme.surface,
+                    drawerContentColor = MaterialTheme.colorScheme.onSurface
                 ) {
                     Column(
                         modifier = Modifier
@@ -109,8 +110,8 @@ fun ClickitNavGraph() {
                             .fillMaxHeight()
                             .padding(24.dp)
                     ) {
-                        Text("Clickit", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
-                        Text("Premium Film Camera", color = Color(0xFFFF6D00), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text("Clickit", color = MaterialTheme.colorScheme.onSurface, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+                        Text("Premium Film Camera", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
 
                         Spacer(modifier = Modifier.height(32.dp))
 
@@ -141,7 +142,7 @@ fun ClickitNavGraph() {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Text("Made with ❤️ by Rahul Shah", color = Color.Gray, fontSize = 11.sp)
+                        Text("Made with ❤️ by Rahul Shah", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                     }
                 }
             }
@@ -240,8 +241,8 @@ private fun DrawerItem(
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = label, tint = Color.White, modifier = Modifier.size(20.dp))
+        Icon(icon, contentDescription = label, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
         Spacer(modifier = Modifier.width(16.dp))
-        Text(label, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Medium)
+        Text(label, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontWeight = FontWeight.Medium)
     }
 }

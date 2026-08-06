@@ -1,9 +1,10 @@
 package com.example.ui.screens
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,11 +14,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -26,9 +27,9 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,6 +51,7 @@ import coil.compose.AsyncImage
 import com.example.data.db.PhotoDao
 import com.example.data.model.PhotoItem
 import com.example.ui.components.GlassCard
+import com.example.utils.ImageProcessingUtils
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -116,7 +118,7 @@ fun PhotoDetailScreen(
                     .clip(RoundedCornerShape(20.dp))
                     .background(Color.Black.copy(alpha = 0.5f))
             ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
 
             IconButton(
@@ -141,7 +143,7 @@ fun PhotoDetailScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -159,7 +161,24 @@ fun PhotoDetailScreen(
                 }
 
                 IconButton(onClick = { onEditPhoto(currentPhoto.id) }) {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color(0xFFFF6D00))
+                    Icon(Icons.Default.Edit, contentDescription = "Edit", tint = MaterialTheme.colorScheme.primary)
+                }
+
+                IconButton(onClick = {
+                    coroutineScope.launch {
+                        val file = File(currentPhoto.filePath)
+                        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                        if (bitmap != null) {
+                            val saved = ImageProcessingUtils.exportToSystemGallery(context, bitmap)
+                            if (saved != null) {
+                                Toast.makeText(context, "Exported to device Gallery!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Export failed", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }) {
+                    Icon(Icons.Default.Download, contentDescription = "Export to Gallery", tint = Color.White)
                 }
 
                 IconButton(onClick = { sharePhoto() }) {
@@ -188,7 +207,7 @@ fun PhotoDetailScreen(
                         .fillMaxWidth()
                         .padding(24.dp)
                 ) {
-                    Text("PHOTO METADATA", color = Color(0xFFFF6D00), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("PHOTO METADATA", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text("File: ${currentPhoto.title}", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)

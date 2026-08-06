@@ -12,18 +12,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +36,7 @@ fun AboutScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF101014))
+            .background(MaterialTheme.colorScheme.background)
             .padding(top = 40.dp)
     ) {
         Row(
@@ -47,9 +46,18 @@ fun AboutScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
             }
-            Text("About Clickit", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = "About Clickit",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
         Column(
@@ -63,33 +71,60 @@ fun AboutScreen(
                 modifier = Modifier
                     .size(90.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFF6D00).copy(alpha = 0.2f)),
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color(0xFFFF6D00), modifier = Modifier.size(48.dp))
+                Icon(
+                    imageVector = Icons.Default.CameraAlt,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(48.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text("Clickit Camera", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.ExtraBold)
-            Text("Package: com.clickit.camera", color = Color.Gray, fontSize = 13.sp)
+            Text(
+                text = "Clickit Camera",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+            Text(
+                text = "Package: com.clickit.camera",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 13.sp
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
 
             GlassCard(
                 modifier = Modifier.fillMaxWidth(),
                 cornerRadius = 24.dp,
-                backgroundColor = Color.White.copy(alpha = 0.08f)
+                backgroundColor = MaterialTheme.colorScheme.surface
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Made with ❤️ by Rahul Shah", color = Color(0xFFFFB300), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "Made with ❤️ by Rahul Shah",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("Version 1.0.0 (Build 1001)", color = Color.White, fontSize = 13.sp)
+                    Text(
+                        text = "Version 1.0.0 (Build 1001)",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 13.sp
+                    )
                     Spacer(modifier = Modifier.height(6.dp))
-                    Text("Target SDK: 36 (Android 16)", color = Color.Gray, fontSize = 12.sp)
+                    Text(
+                        text = "Target SDK: 36 (Android 16)",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp
+                    )
                 }
             }
 
@@ -97,7 +132,7 @@ fun AboutScreen(
 
             Text(
                 text = "Premium film-inspired camera application crafted with Jetpack Compose, CameraX, Room Database, and Material 3 Expressive.",
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp,
                 lineHeight = 18.sp,
                 modifier = Modifier.padding(horizontal = 16.dp)

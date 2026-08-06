@@ -12,6 +12,42 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.example.data.model.AppTheme
 
+private fun createPastelLightScheme(
+    primary: Color,
+    background: Color,
+    surface: Color
+) = lightColorScheme(
+    primary = primary,
+    secondary = primary,
+    tertiary = primary,
+    background = background,
+    surface = surface,
+    surfaceVariant = surface,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = Color(0xFF1C1C1E),
+    onSurface = Color(0xFF1C1C1E),
+    onSurfaceVariant = Color(0xFF555558)
+)
+
+private fun createPastelDarkScheme(
+    primary: Color,
+    background: Color,
+    surface: Color
+) = darkColorScheme(
+    primary = primary,
+    secondary = primary,
+    tertiary = primary,
+    background = background,
+    surface = surface,
+    surfaceVariant = surface,
+    onPrimary = Color.Black,
+    onSecondary = Color.Black,
+    onBackground = Color(0xFFFAFAFC),
+    onSurface = Color(0xFFFAFAFC),
+    onSurfaceVariant = Color(0xFFCCCCCC)
+)
+
 private val ClickitDarkColorScheme = darkColorScheme(
     primary = ClickitOrangeAccent,
     secondary = ClickitGoldAccent,
@@ -27,7 +63,7 @@ private val ClickitDarkColorScheme = darkColorScheme(
 )
 
 private val ClickitLightColorScheme = lightColorScheme(
-    primary = Color(0xFFFF6D00),
+    primary = Color(0xFFF27D26),
     secondary = Color(0xFFFFB300),
     tertiary = Color(0xFFFF8F00),
     background = Color(0xFFFAFAFC),
@@ -56,48 +92,20 @@ fun ClickitTheme(
                 if (systemInDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
             } else ClickitDarkColorScheme
         }
-        AppTheme.SAKURA_PINK -> lightColorScheme(
-            primary = SakuraPrimary, background = SakuraBackground, surface = SakuraSurface, onPrimary = Color.White
-        )
-        AppTheme.LATTE -> lightColorScheme(
-            primary = LattePrimary, background = LatteBackground, surface = LatteSurface, onPrimary = Color.White
-        )
-        AppTheme.CAPPUCCINO -> lightColorScheme(
-            primary = CappuccinoPrimary, background = CappuccinoBackground, surface = CappuccinoSurface, onPrimary = Color.White
-        )
-        AppTheme.ESPRESSO -> darkColorScheme(
-            primary = EspressoPrimary, background = EspressoBackground, surface = EspressoSurface, onPrimary = Color.Black
-        )
-        AppTheme.MINT -> lightColorScheme(
-            primary = MintPrimary, background = MintBackground, surface = MintSurface, onPrimary = Color.White
-        )
-        AppTheme.MATCHA -> lightColorScheme(
-            primary = MatchaPrimary, background = MatchaBackground, surface = MatchaSurface, onPrimary = Color.White
-        )
-        AppTheme.LAVENDER -> lightColorScheme(
-            primary = LavenderPrimary, background = LavenderBackground, surface = LavenderSurface, onPrimary = Color.White
-        )
-        AppTheme.PEACH -> lightColorScheme(
-            primary = PeachPrimary, background = PeachBackground, surface = PeachSurface, onPrimary = Color.White
-        )
-        AppTheme.OCEAN -> lightColorScheme(
-            primary = OceanPrimary, background = OceanBackground, surface = OceanSurface, onPrimary = Color.White
-        )
-        AppTheme.CORAL -> lightColorScheme(
-            primary = CoralPrimary, background = CoralBackground, surface = CoralSurface, onPrimary = Color.White
-        )
-        AppTheme.VANILLA -> lightColorScheme(
-            primary = VanillaPrimary, background = VanillaBackground, surface = VanillaSurface, onPrimary = Color.Black
-        )
-        AppTheme.SKY_BLUE -> lightColorScheme(
-            primary = SkyBluePrimary, background = SkyBlueBackground, surface = SkyBlueSurface, onPrimary = Color.White
-        )
-        AppTheme.MIDNIGHT -> darkColorScheme(
-            primary = MidnightPrimary, background = MidnightBackground, surface = MidnightSurface, onPrimary = Color.White
-        )
-        AppTheme.GRAPHITE -> darkColorScheme(
-            primary = GraphitePrimary, background = GraphiteBackground, surface = GraphiteSurface, onPrimary = Color.White
-        )
+        AppTheme.SAKURA_PINK -> createPastelLightScheme(SakuraPrimary, SakuraBackground, SakuraSurface)
+        AppTheme.LATTE -> createPastelLightScheme(LattePrimary, LatteBackground, LatteSurface)
+        AppTheme.CAPPUCCINO -> createPastelLightScheme(CappuccinoPrimary, CappuccinoBackground, CappuccinoSurface)
+        AppTheme.ESPRESSO -> createPastelDarkScheme(EspressoPrimary, EspressoBackground, EspressoSurface)
+        AppTheme.MINT -> createPastelLightScheme(MintPrimary, MintBackground, MintSurface)
+        AppTheme.MATCHA -> createPastelLightScheme(MatchaPrimary, MatchaBackground, MatchaSurface)
+        AppTheme.LAVENDER -> createPastelLightScheme(LavenderPrimary, LavenderBackground, LavenderSurface)
+        AppTheme.PEACH -> createPastelLightScheme(PeachPrimary, PeachBackground, PeachSurface)
+        AppTheme.OCEAN -> createPastelLightScheme(OceanPrimary, OceanBackground, OceanSurface)
+        AppTheme.CORAL -> createPastelLightScheme(CoralPrimary, CoralBackground, CoralSurface)
+        AppTheme.VANILLA -> createPastelLightScheme(VanillaPrimary, VanillaBackground, VanillaSurface)
+        AppTheme.SKY_BLUE -> createPastelLightScheme(SkyBluePrimary, SkyBlueBackground, SkyBlueSurface)
+        AppTheme.MIDNIGHT -> createPastelDarkScheme(MidnightPrimary, MidnightBackground, MidnightSurface)
+        AppTheme.GRAPHITE -> createPastelDarkScheme(GraphitePrimary, GraphiteBackground, GraphiteSurface)
     }
 
     MaterialTheme(

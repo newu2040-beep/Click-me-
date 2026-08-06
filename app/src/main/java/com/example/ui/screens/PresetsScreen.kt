@@ -2,7 +2,6 @@ package com.example.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,11 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -30,6 +28,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -44,7 +43,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -74,7 +72,7 @@ fun PresetsScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF101014))
+            .background(MaterialTheme.colorScheme.background)
             .padding(top = 40.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -85,9 +83,19 @@ fun PresetsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
                 }
-                Text("Saved Presets", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                Text(
+                    text = "Saved Presets",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             if (presets.isEmpty()) {
@@ -98,9 +106,18 @@ fun PresetsScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Default.Tune, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(64.dp))
+                        Icon(
+                            imageVector = Icons.Default.Tune,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(64.dp)
+                        )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text("No custom presets created yet", color = Color.Gray, fontSize = 15.sp)
+                        Text(
+                            text = "No custom presets created yet",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 15.sp
+                        )
                     }
                 }
             } else {
@@ -115,7 +132,7 @@ fun PresetsScreen(
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp),
                             cornerRadius = 16.dp,
-                            backgroundColor = Color.White.copy(alpha = 0.08f)
+                            backgroundColor = MaterialTheme.colorScheme.surface
                         ) {
                             Row(
                                 modifier = Modifier
@@ -125,8 +142,17 @@ fun PresetsScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column {
-                                    Text(preset.name, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                                    Text("Filter: ${preset.filterType} • Grain: ${(preset.grain * 100).toInt()}%", color = Color.Gray, fontSize = 12.sp)
+                                    Text(
+                                        text = preset.name,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = "Filter: ${preset.filterType} • Grain: ${(preset.grain * 100).toInt()}%",
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 12.sp
+                                    )
                                 }
 
                                 Row {
@@ -138,7 +164,7 @@ fun PresetsScreen(
                                         Icon(
                                             imageVector = if (preset.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                             contentDescription = "Favorite",
-                                            tint = if (preset.isFavorite) Color.Red else Color.White
+                                            tint = if (preset.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
                                         )
                                     }
 
@@ -148,7 +174,11 @@ fun PresetsScreen(
                                             Toast.makeText(context, "Preset deleted", Toast.LENGTH_SHORT).show()
                                         }
                                     }) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Delete",
+                                            tint = Color.Red
+                                        )
                                     }
                                 }
                             }
@@ -161,8 +191,8 @@ fun PresetsScreen(
         // FAB to Add Preset
         FloatingActionButton(
             onClick = { showCreateDialog = true },
-            containerColor = Color(0xFFFF6D00),
-            contentColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp)
@@ -173,24 +203,46 @@ fun PresetsScreen(
         if (showCreateDialog) {
             AlertDialog(
                 onDismissRequest = { showCreateDialog = false },
-                containerColor = Color(0xFF1C1C22),
-                title = { Text("Create Preset", color = Color.White, fontWeight = FontWeight.Bold) },
+                containerColor = MaterialTheme.colorScheme.surface,
+                title = {
+                    Text(
+                        text = "Create Preset",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 text = {
                     Column {
                         OutlinedTextField(
                             value = newPresetName,
                             onValueChange = { newPresetName = it },
-                            label = { Text("Preset Name", color = Color.Gray) },
+                            label = { Text("Preset Name", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text("Film Grain: ${(grainValue * 100).toInt()}%", color = Color.White, fontSize = 12.sp)
-                        Slider(value = grainValue, onValueChange = { grainValue = it }, colors = SliderDefaults.colors(thumbColor = Color(0xFFFF6D00)))
+                        Text(
+                            text = "Film Grain: ${(grainValue * 100).toInt()}%",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp
+                        )
+                        Slider(
+                            value = grainValue,
+                            onValueChange = { grainValue = it },
+                            colors = SliderDefaults.colors(thumbColor = MaterialTheme.colorScheme.primary)
+                        )
 
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text("Warmth: ${(tempValue * 100).toInt()}%", color = Color.White, fontSize = 12.sp)
-                        Slider(value = tempValue, onValueChange = { tempValue = it }, colors = SliderDefaults.colors(thumbColor = Color(0xFFFFD54F)))
+                        Text(
+                            text = "Warmth: ${(tempValue * 100).toInt()}%",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp
+                        )
+                        Slider(
+                            value = tempValue,
+                            onValueChange = { tempValue = it },
+                            colors = SliderDefaults.colors(thumbColor = MaterialTheme.colorScheme.primary)
+                        )
                     }
                 },
                 confirmButton = {
@@ -211,14 +263,14 @@ fun PresetsScreen(
                                 }
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6D00))
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text("Save Preset", color = Color.White)
+                        Text("Save Preset", color = MaterialTheme.colorScheme.onPrimary)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showCreateDialog = false }) {
-                        Text("Cancel", color = Color.Gray)
+                        Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             )
